@@ -1,62 +1,66 @@
-# AI-VoiceNote-Summarizer
+# AI Voice Note Summarizer  
+**Phase 1 — Speech-to-Text & Intelligence Foundation**
 
-This project is an experimental AI pipeline that converts voice notes into:
-- a raw transcript
-- a concise TL;DR
-- a detailed summary
+This project is an experimental AI pipeline that processes real-world voice notes
+(e.g. WhatsApp recordings) into high-quality transcripts and extracts
+foundational signals required for downstream summarization and understanding.
 
----
-
- ## What It Does (Current State)
-
-Given an audio file (`.mp3`):
-1. Transcribes speech to text using **OpenAI Whisper**
-2. Outputs the **raw transcript** (no heavy cleaning)
-3. Generates:
-   - a **TL;DR** summary
-   - a **detailed summary**
-   using a transformer-based summarization model
-
-The pipeline runs **locally** on CPU (no cloud APIs).
+The current focus is on **robust audio ingestion and accurate speech-to-text** —
+the most critical prerequisite for reliable summarization.
 
 ---
 
+## What It Does (Current State)
 
+Given an audio file (`.opus`, `.ogg`, `.mp3`, `.m4a`):
+
+1. **Preprocesses audio** using ffmpeg  
+   - Converts to mono  
+   - Resamples to 16 kHz (Whisper-friendly format)
+
+2. **Transcribes speech to text** using OpenAI Whisper (`medium` model)  
+   - Optimized for conversational speech and varied accents  
+   - Runs locally on CPU (no cloud ASR APIs)
+
+3. **Outputs a clean raw transcript**  
+   - Printed directly to the terminal  
+   - No aggressive post-processing (intentional)
+
+This repository currently implements the **ASR and preprocessing foundation**
+for a voice note summarization system.
+
+---
+
+## Why This Design
+
+High-quality summarization is impossible without high-quality transcripts.
+
+This project intentionally prioritizes:
+- real-world audio formats (e.g. WhatsApp `.opus`)
+- deterministic preprocessing
+- transcription accuracy over speed
+- clean, modular pipeline design
+
+Summarization and higher-level understanding are built **on top of this foundation**
+in later phases.
+
+---
 
 ## Tech Stack
 
-- **Python 3.11**
-- **Whisper** — speech-to-text
-- **Hugging Face Transformers**
-  - BART / DistilBART for summarization
-- **ffmpeg** — audio processing
+- **Python 3.11+**
+- **OpenAI Whisper** — speech-to-text (medium model)
+- **ffmpeg** — audio preprocessing
+- **Local CPU execution** (no ASR cloud APIs)
 
 ---
 
-## Known Limitations (Important)
+## Project Structure
 
-This project is **not yet production-ready**.
-
-Current issues and limitations:
-- Summarization quality degrades on very short or purely instructional audio
-- Long audio (> a few minutes) is not fully supported yet
-- Summarization models may add redundant or unnecessary phrasing
-- No action item extraction (e.g., tasks, deadlines)
-- No content-type detection (commands vs narrative speech)
-- No confidence scoring or reliability indicators
-
-These limitations are intentional and documented for future refinement.
-
-
-## Planned Improvements (Roadmap)
-
-- Hierarchical summarization for long audio
-  - chunk audio → summarize chunks → summarize summaries
-- Content-type–aware handling
-  - different logic for commands, notifications, meetings, lectures
-- Action item extraction (deadlines, tasks, requests)
-- Better length-adaptive summarization policies
-- Cleaner separation of pipeline stages in code
-- Optional lightweight UI / CLI improvements
-
----
+```text
+backend/
+├── audio/          # Input audio files
+├── tmp/            # Temporary preprocessed audio
+├── transcripts/    # Generated transcripts (optional)
+├── preprocessing.py
+└── transcribe.py
