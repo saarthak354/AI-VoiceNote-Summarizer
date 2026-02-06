@@ -37,5 +37,6 @@ if __name__ == "__main__":
 
     if not audio_files:
         print("No audio files found in backend/audio")
+        print("No audio files found in backend/audio")
     else:
         transcribe_audio(audio_files[0])
