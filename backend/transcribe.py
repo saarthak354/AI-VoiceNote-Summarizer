@@ -30,6 +30,7 @@ def transcribe_audio(audio_path: Path):
     print("\n--- TRANSCRIPT START ---\n")
     print(result["text"])
     print("\n--- TRANSCRIPT END ---\n")
+    print("\n--- TRANSCRIPT END ---\n")
 
 
 if __name__ == "__main__":
