@@ -41,8 +41,7 @@ def transcribe_audio(audio_path: Path):
         transcript_text = result["text"]
         sentiment = analyze_sentiment(transcript_text)
 
-        print("\n--- SENTIMENT ANALYSIS ---\n")
-        print(sentiment)
+        
     if ENABLE_SUMMARIZATION:
         summary = summarize_transcript(
         transcript_text,

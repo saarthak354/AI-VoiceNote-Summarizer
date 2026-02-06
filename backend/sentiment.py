@@ -2,7 +2,8 @@ import os
 import json
 from openai import OpenAI
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+API_KEY = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=API_KEY) if API_KEY else None
 
 
 def analyze_sentiment(text: str) -> dict:
@@ -10,6 +11,9 @@ def analyze_sentiment(text: str) -> dict:
     Analyze sentiment, tone, and emotional shift in a voice note transcript.
     Returns structured JSON as a Python dictionary.
     """
+
+    if client is None:
+        raise RuntimeError("OPENAI_API_KEY not set. Sentiment analysis disabled.")
 
     prompt = f"""
 You are analyzing a spoken voice note transcript.
@@ -38,7 +42,8 @@ Transcript:
             {"role": "system", "content": "You extract structured emotional information from speech."},
             {"role": "user", "content": prompt}
         ],
-        temperature=0.2
+        temperature=0.0,
+        response_format={"type": "json_object"}
     )
 
     return json.loads(response.choices[0].message.content)
