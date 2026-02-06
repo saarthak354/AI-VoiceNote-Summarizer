@@ -8,11 +8,12 @@ client = OpenAI(api_key=API_KEY) if API_KEY else None
 
 def summarize_transcript(
     text: str,
-    sentiment: dict | None = None
+    sentiment: dict | None = None,
+    intent: dict | None = None
 ) -> dict:
     """
     Generate a TL;DR and a detailed summary from a voice note transcript.
-    Optionally conditions on sentiment and emotional tone.
+    Conditions silently on sentiment and intent.
     """
 
     if client is None:
@@ -21,21 +22,33 @@ def summarize_transcript(
     sentiment_context = ""
     if sentiment:
         sentiment_context = f"""
-Sentiment context:
+Sentiment context (internal):
 - Overall sentiment: {sentiment.get("sentiment")}
 - Tone: {", ".join(sentiment.get("tone", []))}
 - Emotional shift: {sentiment.get("emotional_shift")}
 """
 
+    intent_context = ""
+    if intent:
+        intent_context = f"""
+Intent context (internal):
+- Primary intent: {intent.get("intent")}
+- Urgency: {intent.get("urgency")}
+- Action items present: {len(intent.get("action_items", [])) > 0}
+"""
+
     prompt = f"""
 You are summarizing a spoken voice note.
 
-Guidelines:
-- Do NOT add information not present in the transcript
-- Preserve the speaker's intent and emotional context
-- Be concise and concrete
-
 {sentiment_context}
+{intent_context}
+
+Instructions:
+- Write a concise TL;DR (1–2 sentences).
+- Write a detailed summary that preserves intent and emotional nuance.
+- Do NOT invent tasks, deadlines, or decisions.
+- Do NOT mention sentiment or intent explicitly.
+- Keep the language natural and human.
 
 Return ONLY valid JSON in this format:
 {{
@@ -53,7 +66,8 @@ Transcript:
             {"role": "system", "content": "You generate precise summaries of spoken content."},
             {"role": "user", "content": prompt}
         ],
-        temperature=0.3
+        temperature=0.2,
+        response_format={"type": "json_object"}
     )
 
     return json.loads(response.choices[0].message.content)
