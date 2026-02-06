@@ -30,14 +30,12 @@ def transcribe_audio(audio_path: Path):
     print("\n--- TRANSCRIPT START ---\n")
     print(result["text"])
     print("\n--- TRANSCRIPT END ---\n")
-    print("\n--- TRANSCRIPT END ---\n")
 
 
 if __name__ == "__main__":
     audio_files = list(AUDIO_DIR.glob("*"))
 
     if not audio_files:
-        print("No audio files found in backend/audio")
         print("No audio files found in backend/audio")
     else:
         transcribe_audio(audio_files[0])
