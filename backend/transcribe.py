@@ -2,6 +2,9 @@ from pathlib import Path
 import whisper
 from preprocessing import preprocess_audio
 from sentiment import analyze_sentiment
+from summarization import summarize_transcript
+
+ENABLE_SUMMARIZATION = True
 
 ENABLE_SENTIMENT = True
 
@@ -40,7 +43,17 @@ def transcribe_audio(audio_path: Path):
 
         print("\n--- SENTIMENT ANALYSIS ---\n")
         print(sentiment)
+    if ENABLE_SUMMARIZATION:
+        summary = summarize_transcript(
+        transcript_text,
+        sentiment=sentiment if ENABLE_SENTIMENT else None
+    )
 
+        print("\n--- TL;DR ---\n")
+        print(summary["tldr"])
+
+        print("\n--- DETAILED SUMMARY ---\n")
+        print(summary["detailed_summary"])
 
 if __name__ == "__main__":
     audio_files = list(AUDIO_DIR.glob("*"))
