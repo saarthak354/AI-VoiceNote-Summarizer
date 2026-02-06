@@ -1,6 +1,9 @@
 from pathlib import Path
 import whisper
 from preprocessing import preprocess_audio
+from sentiment import analyze_sentiment
+
+ENABLE_SENTIMENT = True
 
 AUDIO_DIR = Path("backend/audio")
 TRANSCRIPT_DIR = Path("backend/transcripts")
@@ -30,6 +33,13 @@ def transcribe_audio(audio_path: Path):
     print("\n--- TRANSCRIPT START ---\n")
     print(result["text"])
     print("\n--- TRANSCRIPT END ---\n")
+
+    if ENABLE_SENTIMENT:
+        transcript_text = result["text"]
+        sentiment = analyze_sentiment(transcript_text)
+
+        print("\n--- SENTIMENT ANALYSIS ---\n")
+        print(sentiment)
 
 
 if __name__ == "__main__":
