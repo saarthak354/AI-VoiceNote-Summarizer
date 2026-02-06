@@ -6,12 +6,10 @@ API_KEY = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key=API_KEY) if API_KEY else None
 
 
-def summarize_transcript(text: str, sentiment: dict | None = None, intent: dict | None = None) -> dict:
+def extract_intent(text: str) -> dict:
     """
     Classifies the intent of a voice note and extracts
     action items or decisions if present.
-
-    Returns structured JSON following the intent schema.
     """
 
     if client is None:
@@ -65,14 +63,8 @@ Transcript:
     response = client.chat.completions.create(
         model="gpt-4.1-mini",
         messages=[
-            {
-                "role": "system",
-                "content": "You extract intent and actionable meaning from spoken language."
-            },
-            {
-                "role": "user",
-                "content": prompt
-            }
+            {"role": "system", "content": "You extract intent and actionable meaning from spoken language."},
+            {"role": "user", "content": prompt}
         ],
         temperature=0.0,
         response_format={"type": "json_object"}
